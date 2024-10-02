@@ -4,7 +4,7 @@ import ProtectedRoute from '@/components/ProtectedRoutes'
 import { useAuth } from '@/services/authContext'
 
 const InteriorPage = () => {
-	const { user, userData } = useAuth()
+	const { userData } = useAuth()
 	return (
 		<>
 			<ProtectedRoute path={'/interior'}>

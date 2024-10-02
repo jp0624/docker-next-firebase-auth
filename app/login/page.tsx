@@ -1,5 +1,4 @@
 import LoginForm from '@/components/LoginForm'
-import Login from '@/components/LoginForm'
 import { REGISTER_ROUTE } from '@/constants/routes'
 import Link from 'next/link'
 
