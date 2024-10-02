@@ -1,5 +1,6 @@
 'use client'
 
+import { LOGIN_ROUTE } from '@/constants/routes'
 import { useAuth } from '@/services/authContext'
 import { set } from 'firebase/database'
 import { useRouter } from 'next/navigation'
@@ -17,7 +18,7 @@ const ProtectedRoute = ({
 
 	useEffect(() => {
 		if (!user.uid) {
-			router.push('/')
+			router.push(LOGIN_ROUTE)
 		} else {
 			router.push(`${path}`)
 		}
