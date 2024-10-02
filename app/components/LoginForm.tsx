@@ -73,7 +73,7 @@ const LoginForm = () => {
 							<FormItem>
 								<FormLabel>Email Address</FormLabel>
 								<FormControl>
-									<Input type='email' placeholder='shadcn' {...field} />
+									<Input type='email' placeholder='Email Address' {...field} />
 								</FormControl>
 								<FormMessage />
 							</FormItem>
