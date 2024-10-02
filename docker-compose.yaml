@@ -1,0 +1,8 @@
+version: '3'
+services:
+  web:
+    image: docker-next-firebase-auth
+    ports:
+      - '3000:3000'
+    build: .
+    restart: always
