@@ -3,15 +3,23 @@
 import { INTERIOR_ROUTE, LOGIN_ROUTE } from '@/constants/routes'
 import { useRouter } from 'next/navigation'
 import { useAuth } from './services/authContext'
+import { useState } from 'react'
 
 const LoginPage = () => {
-	const { user } = useAuth()
+	const [loading, setLoading] = useState(true)
+	const { user, userData } = useAuth()
 	const router = useRouter()
-
+	setTimeout(() => {
+		setLoading(false)
+	}, 500)
 	return (
 		<>
-			{user.uid && router.push(INTERIOR_ROUTE)}
-			{!user.uid && router.push(LOGIN_ROUTE)}
+			{loading && <p>Loading...</p>}
+			{!loading && userData?.uid ? (
+				<>{userData?.uid && router.push(INTERIOR_ROUTE)}</>
+			) : (
+				<>{!userData?.uid && router.push(LOGIN_ROUTE)}</>
+			)}
 		</>
 	)
 }

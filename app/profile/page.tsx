@@ -4,7 +4,7 @@ import ProtectedRoute from '@/components/ProtectedRoutes'
 const ProfilePage = () => {
 	return (
 		<>
-			<ProtectedRoute path='/profile'>
+			<ProtectedRoute path={`/profile`}>
 				<ProfileForm />
 			</ProtectedRoute>
 		</>
