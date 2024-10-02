@@ -9,7 +9,7 @@ const LoginPage = () => {
 	// const [loading, setLoading] = useState(true)
 	const { user, userData } = useAuth()
 	const router = useRouter()
-	return <>{userData?.uid && router.push(INTERIOR_ROUTE)}</>
+	return <>{router.push(INTERIOR_ROUTE)}</>
 }
 
 export default LoginPage
