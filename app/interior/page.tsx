@@ -12,6 +12,7 @@ const InteriorPage = () => {
 					{userData?.first_name && (
 						<>
 							Welcome back, {userData?.first_name} {userData?.last_name}!
+							<pre>{JSON.stringify(userData, null, 2)}</pre>
 						</>
 					)}
 				</div>
