@@ -98,7 +98,14 @@ export const AuthContextProvider = ({
 	// Wrap the children with the context provider
 	return (
 		<AuthContext.Provider
-			value={{ user, signUp, logIn, logOut, userData, updateUser }}
+			value={{
+				user,
+				signUp,
+				logIn,
+				logOut,
+				userData,
+				updateUser,
+			}}
 		>
 			{loading ? null : children}
 		</AuthContext.Provider>

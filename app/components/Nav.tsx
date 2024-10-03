@@ -9,17 +9,20 @@ import {
 import { useAuth } from '@/services/authContext'
 import Link from 'next/link'
 import SignOutButton from './ui/signout-button'
+import { auth } from '@/services/firebase'
 
 const Nav = () => {
-	const { user } = useAuth()
+	const { user, userData } = useAuth()
 	return (
 		<>
 			<ul className='flex justify-between gap-5 pr-5 md:pr-10 text-sm'>
-				{user && user.uid ? (
+				{auth.currentUser ? (
 					<>
-						<Link href={PROFILE_ROUTE}>
-							<li>Profile</li>
-						</Link>
+						{!userData?.display_name && (
+							<Link href={PROFILE_ROUTE}>
+								<li>Profile</li>
+							</Link>
+						)}
 						<li>
 							<SignOutButton />
 						</li>

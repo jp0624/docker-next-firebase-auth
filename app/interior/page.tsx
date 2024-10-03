@@ -13,7 +13,7 @@ const InteriorPage = () => {
 		<>
 			<ProtectedRoute path={'/interior'}>
 				<div>
-					{userData?.first_name && (
+					{!userData?.display_name ? (
 						<>
 							<p className='text-center text-xl border-b-2'>
 								Welcome back,{' '}
@@ -29,9 +29,17 @@ const InteriorPage = () => {
 									className='w-full'
 									onClick={() => router.push(PROFILE_ROUTE)}
 								>
-									Edit Profile
+									View Profile Details
 								</Button>
 							</p>
+						</>
+					) : (
+						<>
+							<p className='text-center text-xl border-b-2'>
+								Welcome back,{' '}
+								<em className='font-bold'>{userData?.display_name}!</em>
+							</p>
+							<p>You're signed in through google.</p>
 						</>
 					)}
 				</div>

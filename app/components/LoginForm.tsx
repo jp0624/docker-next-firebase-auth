@@ -14,8 +14,12 @@ import { Input } from './ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { auth } from '@/services/firebase'
-import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth, db } from '@/services/firebase'
+import {
+	signInWithEmailAndPassword,
+	GoogleAuthProvider,
+	signInWithPopup,
+} from 'firebase/auth'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import {
@@ -24,6 +28,9 @@ import {
 	RESET_PASSWORD_ROUTE,
 } from '@/constants/routes'
 import Link from 'next/link'
+import { Chrome, GoalIcon } from 'lucide-react'
+import Google from 'next-auth/providers/google'
+import { addDoc, collection } from 'firebase/firestore'
 
 const formSchema = z.object({
 	email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -58,6 +65,37 @@ const LoginForm = () => {
 				console.log('errorCode: ', errorCode)
 				console.log('errorMessage: ', errorMessage)
 				setLoading(false)
+			})
+	}
+	const signUpGoogle = () => {
+		const provider = new GoogleAuthProvider()
+
+		signInWithPopup(auth, provider)
+			.then(async ({ user }) => {
+				console.log('user: ', user)
+
+				// Save to Firestore
+				let userObj = {
+					email: user.email,
+					uid: user.uid,
+					display_name: user.displayName,
+					createdAt: new Date(),
+				}
+				const userRef = collection(db, 'users', user.uid, 'data')
+				try {
+					await addDoc(userRef, userObj)
+					router.push(INTERIOR_ROUTE)
+				} catch (e) {
+					console.error('Error adding document: ', e)
+				}
+			})
+			.catch((error) => {
+				const errorCode = error.code
+				const errorMessage = error.message
+				errorCode === 'auth/invalid-credential' &&
+					setErrorcode('Incorrect email or password')
+				console.log('errorCode: ', errorCode)
+				console.log('errorMessage: ', errorMessage)
 			})
 	}
 	return (
@@ -106,6 +144,10 @@ const LoginForm = () => {
 						Log In
 					</Button>
 				</form>
+				<p className='text-sm w-full text-center !mt-1'>or</p>
+				<Button className='!mt-3 px-10' onClick={signUpGoogle}>
+					<Chrome className='w-4 h-4 mr-2' /> Sign in with Google
+				</Button>
 				<p className='text-sm pt-5'>
 					Don't have an account?
 					<Link href={REGISTER_ROUTE}>

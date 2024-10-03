@@ -8,6 +8,7 @@ const SignOutButton = () => {
 
 	const handleSignOut = async () => {
 		await signOut(auth)
+		console.log('user: ', auth.currentUser)
 		router.push(HOME_ROUTE)
 	}
 

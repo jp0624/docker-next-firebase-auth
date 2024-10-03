@@ -120,10 +120,9 @@ const RegisterForm = () => {
 				const userRef = collection(db, 'users', uid, 'data')
 				try {
 					await addDoc(userRef, userObj)
+					router.push(INTERIOR_ROUTE)
 				} catch (e) {
 					console.error('Error adding document: ', e)
-				} finally {
-					router.push(INTERIOR_ROUTE)
 				}
 
 				// ...
