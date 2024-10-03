@@ -23,9 +23,12 @@ const passwordValidation = new RegExp(
 )
 
 const profileFormSchema = z.object({
-	email: z.string().email({ message: 'Please enter a valid email address.' }),
 	first_name: z.string().trim().min(1, 'Please fill out this field'),
 	last_name: z.string().trim().min(1, 'Please fill out this field'),
+})
+const emailFormSchema = z.object({
+	email: z.string().email({ message: 'Please enter a valid email address.' }),
+	password: z.string().trim().min(1, 'Please enter your current password'),
 })
 const passwordFormSchema = z
 	.object({
@@ -62,6 +65,10 @@ const ProfileForm = () => {
 		first_name: '',
 		last_name: '',
 	}
+	const emailDefaultValues = {
+		email: '',
+		password: '',
+	}
 	const passwordDefaultValues = {
 		new_password: '',
 		current_password: '',
@@ -70,6 +77,12 @@ const ProfileForm = () => {
 	const profileForm = useForm<z.infer<typeof profileFormSchema>>({
 		resolver: zodResolver(profileFormSchema),
 		defaultValues: profileDefaultValues,
+		mode: 'onChange',
+		values: userData,
+	})
+	const emailForm = useForm<z.infer<typeof emailFormSchema>>({
+		resolver: zodResolver(emailFormSchema),
+		defaultValues: emailDefaultValues,
 		mode: 'onChange',
 		values: userData,
 	})
@@ -82,6 +95,12 @@ const ProfileForm = () => {
 		profileValues: z.infer<typeof profileFormSchema>
 	) => {
 		console.log('profileValues: ', profileValues)
+		if (loading) return
+	}
+	const onSubmitUpdateEmail = (
+		emailValues: z.infer<typeof emailFormSchema>
+	) => {
+		console.log('emailValues: ', emailValues)
 		if (loading) return
 	}
 	const onSubmitUpdatePassword = (
@@ -132,14 +151,43 @@ const ProfileForm = () => {
 							</FormItem>
 						)}
 					/>
+					<Button type='submit'>Update Profile</Button>
+				</form>
+			</Form>
+			<Form {...emailForm}>
+				<form
+					onSubmit={emailForm.handleSubmit(onSubmitUpdateEmail)}
+					className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
+				>
+					<h1 className='text-3xl pt-5 border-t-2 font-bold text-left whitespace-nowrap'>
+						Update Email Address
+					</h1>
 					<FormField
-						control={profileForm.control}
+						control={emailForm.control}
 						name='email'
 						render={({ field }) => (
 							<FormItem>
 								<FormLabel>Email Address</FormLabel>
 								<FormControl>
 									<Input type='email' placeholder='shadcn' {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+					<FormField
+						control={emailForm.control}
+						name='password'
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Current Password</FormLabel>
+								<FormControl>
+									<PasswordInput
+										id='current_password'
+										autoComplete='current-password'
+										required={true}
+										{...field}
+									/>
 								</FormControl>
 								<FormMessage />
 							</FormItem>
