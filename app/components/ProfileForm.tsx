@@ -118,14 +118,14 @@ const ProfileForm = () => {
 				{editStatus === 'profile' ? (
 					<Button
 						onClick={() => setEditStatus(null)}
-						className='bg-slate-500 p-1 h-5 w-5'
+						className='bg-red-800 p-1 h-5 w-5'
 					>
-						<X className='h-4 w-4' />
+						<X className=' h-4 w-4' />
 					</Button>
 				) : (
 					<Button
 						onClick={() => setEditStatus('profile')}
-						className='bg-slate-500 p-1 h-5 w-5'
+						className=' p-1 h-5 w-5'
 					>
 						<Edit className='h-4 w-4' />
 					</Button>
@@ -183,14 +183,14 @@ const ProfileForm = () => {
 				{editStatus === 'email' ? (
 					<Button
 						onClick={() => setEditStatus(null)}
-						className='bg-slate-500 p-1 h-5 w-5'
+						className='bg-red-800 p-1 h-5 w-5'
 					>
 						<X className='h-4 w-4' />
 					</Button>
 				) : (
 					<Button
 						onClick={() => setEditStatus('email')}
-						className='bg-slate-500 p-1 h-5 w-5'
+						className=' p-1 h-5 w-5'
 					>
 						<Edit className='h-4 w-4' />
 					</Button>
@@ -252,14 +252,14 @@ const ProfileForm = () => {
 				{editStatus === 'password' ? (
 					<Button
 						onClick={() => setEditStatus(null)}
-						className='bg-slate-500 p-1 h-5 w-5'
+						className='bg-red-800 p-1 h-5 w-5'
 					>
 						<X className='h-4 w-4' />
 					</Button>
 				) : (
 					<Button
 						onClick={() => setEditStatus('password')}
-						className='bg-slate-500 p-1 h-5 w-5'
+						className=' p-1 h-5 w-5'
 					>
 						<Edit className='h-4 w-4' />
 					</Button>
