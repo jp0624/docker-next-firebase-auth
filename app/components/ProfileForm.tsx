@@ -18,6 +18,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { updatePassword } from 'firebase/auth'
 import { useState } from 'react'
+import { Edit, X } from 'lucide-react'
 const passwordValidation = new RegExp(
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*?])[A-Za-z\d!@#$%^&*?]{8,}$/
 )
@@ -59,6 +60,7 @@ const passwordFormSchema = z
 const ProfileForm = () => {
 	const { user, userData, updateUser } = useAuth()
 	const [loading, setLoading] = useState<boolean>(false)
+	const [editStatus, setEditStatus] = useState<null | string>(null)
 
 	const profileDefaultValues = {
 		email: '',
@@ -112,156 +114,223 @@ const ProfileForm = () => {
 
 	return (
 		<>
-			<Form {...profileForm}>
-				<form
-					onSubmit={profileForm.handleSubmit(onSubmitUpdateProfile)}
-					className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
-				>
-					<h1 className='text-3xl pt-2 font-bold  text-left whitespace-nowrap'>
-						Update Profile
-					</h1>
-					<FormField
-						control={profileForm.control}
-						name='first_name'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>First Name</FormLabel>
-								<FormControl>
-									<Input type='text' placeholder='First Name' {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={profileForm.control}
-						name='last_name'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Last Name</FormLabel>
-								<FormControl>
-									<Input
-										type='text'
-										placeholder='Last Name'
-										// value={userData?.last_name}
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<Button type='submit'>Update Profile</Button>
-				</form>
-			</Form>
-			<Form {...emailForm}>
-				<form
-					onSubmit={emailForm.handleSubmit(onSubmitUpdateEmail)}
-					className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
-				>
-					<h1 className='text-3xl pt-5 border-t-2 font-bold text-left whitespace-nowrap'>
-						Update Email Address
-					</h1>
-					<FormField
-						control={emailForm.control}
-						name='email'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Email Address</FormLabel>
-								<FormControl>
-									<Input type='email' placeholder='shadcn' {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={emailForm.control}
-						name='password'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Current Password</FormLabel>
-								<FormControl>
-									<PasswordInput
-										id='current_password'
-										autoComplete='current-password'
-										required={true}
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<Button type='submit'>Update Profile</Button>
-				</form>
-			</Form>
+			<h1 className='text-3xl pt-2 font-bold  text-left whitespace-nowrap w-2/3 lg:w-1/3'>
+				{editStatus === 'profile' ? (
+					<Button
+						onClick={() => setEditStatus(null)}
+						className='bg-slate-500 p-1 h-5 w-5'
+					>
+						<X className='h-4 w-4' />
+					</Button>
+				) : (
+					<Button
+						onClick={() => setEditStatus('profile')}
+						className='bg-slate-500 p-1 h-5 w-5'
+					>
+						<Edit className='h-4 w-4' />
+					</Button>
+				)}{' '}
+				Profile Details
+			</h1>
+			{editStatus !== 'profile' && (
+				<ul className='space-y-8 flex flex-col pt-2 w-2/3 lg:w-1/3'>
+					<li>First Name: {userData?.first_name}</li>
+					<li className='!mt-1 border-t-2'>Last Name: {userData?.last_name}</li>
+				</ul>
+			)}
+			{editStatus === 'profile' && (
+				<Form {...profileForm}>
+					<form
+						onSubmit={profileForm.handleSubmit(onSubmitUpdateProfile)}
+						className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
+					>
+						<FormField
+							control={profileForm.control}
+							name='first_name'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>First Name</FormLabel>
+									<FormControl>
+										<Input type='text' placeholder='First Name' {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={profileForm.control}
+							name='last_name'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Last Name</FormLabel>
+									<FormControl>
+										<Input
+											type='text'
+											placeholder='Last Name'
+											// value={userData?.last_name}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<Button type='submit'>Update Profile</Button>
+					</form>
+				</Form>
+			)}
+			<h1 className='text-3xl pt-5 font-bold  text-left whitespace-nowrap w-2/3 lg:w-1/3'>
+				{editStatus === 'email' ? (
+					<Button
+						onClick={() => setEditStatus(null)}
+						className='bg-slate-500 p-1 h-5 w-5'
+					>
+						<X className='h-4 w-4' />
+					</Button>
+				) : (
+					<Button
+						onClick={() => setEditStatus('email')}
+						className='bg-slate-500 p-1 h-5 w-5'
+					>
+						<Edit className='h-4 w-4' />
+					</Button>
+				)}{' '}
+				Email Address
+			</h1>
+			{editStatus !== 'email' && (
+				<ul className='space-y-8 flex flex-col pt-2 w-2/3 lg:w-1/3'>
+					<li>Email Address: {userData?.email}</li>
+				</ul>
+			)}
+			{editStatus === 'email' && (
+				<Form {...emailForm}>
+					<form
+						onSubmit={emailForm.handleSubmit(onSubmitUpdateEmail)}
+						className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
+					>
+						<FormField
+							control={emailForm.control}
+							name='email'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Email Address</FormLabel>
+									<FormControl>
+										<Input
+											type='email'
+											placeholder='Email Address'
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={emailForm.control}
+							name='password'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Current Password</FormLabel>
+									<FormControl>
+										<PasswordInput
+											id='current_password'
+											autoComplete='current-password'
+											required={true}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<Button type='submit'>Update Email</Button>
+					</form>
+				</Form>
+			)}
 
-			<Form {...passwordForm}>
-				<form
-					onSubmit={passwordForm.handleSubmit(onSubmitUpdatePassword)}
-					className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
-				>
-					<h1 className='text-3xl pt-5 border-t-2 font-bold text-left whitespace-nowrap'>
-						Update Password
-					</h1>
-					<FormField
-						control={passwordForm.control}
-						name='current_password'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Current Password</FormLabel>
-								<FormControl>
-									<PasswordInput
-										id='current_password'
-										autoComplete='current-password'
-										required={true}
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={passwordForm.control}
-						name='new_password'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>New Password</FormLabel>
-								<FormControl>
-									<PasswordInput
-										id='new_password'
-										autoComplete='new-password'
-										required={true}
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={passwordForm.control}
-						name='confirm_password'
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Confirm Password</FormLabel>
-								<FormControl>
-									<PasswordInput
-										id='confirm_password'
-										autoComplete='confirm-password'
-										required={true}
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<Button type='submit'>Change Password</Button>
-				</form>
-			</Form>
+			<h1 className='text-3xl pt-5 font-bold  text-left whitespace-nowrap w-2/3 lg:w-1/3'>
+				{editStatus === 'password' ? (
+					<Button
+						onClick={() => setEditStatus(null)}
+						className='bg-slate-500 p-1 h-5 w-5'
+					>
+						<X className='h-4 w-4' />
+					</Button>
+				) : (
+					<Button
+						onClick={() => setEditStatus('password')}
+						className='bg-slate-500 p-1 h-5 w-5'
+					>
+						<Edit className='h-4 w-4' />
+					</Button>
+				)}{' '}
+				Password
+			</h1>
+
+			{editStatus === 'password' && (
+				<Form {...passwordForm}>
+					<form
+						onSubmit={passwordForm.handleSubmit(onSubmitUpdatePassword)}
+						className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
+					>
+						<FormField
+							control={passwordForm.control}
+							name='current_password'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Current Password</FormLabel>
+									<FormControl>
+										<PasswordInput
+											id='current_password'
+											autoComplete='current-password'
+											required={true}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={passwordForm.control}
+							name='new_password'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>New Password</FormLabel>
+									<FormControl>
+										<PasswordInput
+											id='new_password'
+											autoComplete='new-password'
+											required={true}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={passwordForm.control}
+							name='confirm_password'
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Confirm Password</FormLabel>
+									<FormControl>
+										<PasswordInput
+											id='confirm_password'
+											autoComplete='confirm-password'
+											required={true}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<Button type='submit'>Change Password</Button>
+					</form>
+				</Form>
+			)}
 		</>
 	)
 }
