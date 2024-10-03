@@ -23,11 +23,18 @@ import { useRouter } from 'next/navigation'
 import { INTERIOR_ROUTE } from '@/constants/routes'
 
 const passwordValidation = new RegExp(
-	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&,./<>?;':=_+])[A-Za-z\d@$!%*?&,./<>?;':=_+]{8,}$/
+	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&,.#/<>?;':=_+])[A-Za-z\d#@$!%*?&,./<>?;':=_+]{8,}$/
 )
 const emailValidation = new RegExp(
 	/^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 )
+const MAX_UPLOAD_SIZE = 10 * 1024 * 1024
+const ACCEPTED_FILE_TYPES = [
+	'image/jpeg',
+	'image/jpg',
+	'image/png',
+	'image/webp',
+]
 
 const formSchema = z
 	.object({
@@ -50,6 +57,15 @@ const formSchema = z
 		confirm_password: z.string().trim().min(1, 'Please fill out this field'),
 		first_name: z.string().trim().min(1, 'Please fill out this field'),
 		last_name: z.string().trim().min(1, 'Please fill out this field'),
+		// picture: z
+		// 	.any()
+		// 	.refine((files) => {
+		// 		return files?.[0]?.size <= MAX_UPLOAD_SIZE
+		// 	}, `Max image size is 5MB.`)
+		// 	.refine(
+		// 		(files) => ACCEPTED_FILE_TYPES.includes(files?.[0]?.type),
+		// 		'Only .jpg, .jpeg, .png and .webp formats are supported.'
+		// 	),
 	})
 	.superRefine(({ confirm_password, password }, ctx) => {
 		if (confirm_password !== password) {
@@ -73,6 +89,7 @@ const RegisterForm = () => {
 			confirm_password: '',
 			first_name: '',
 			last_name: '',
+			// picture: '',
 		},
 	})
 	const onSubmit = (values: z.infer<typeof formSchema>) => {
@@ -131,7 +148,10 @@ const RegisterForm = () => {
 					onSubmit={form.handleSubmit(onSubmit)}
 					className='space-y-8 flex flex-col flex-items-center justify-center align-center w-2/3 lg:w-1/3'
 				>
-					{errorcode && <p className='text-red-500'>{errorcode}</p>}
+					<p className='text-sm pt-2 text-right'>
+						<em className='text-red-500'>*</em> Represents Required Fields
+					</p>
+					{errorcode && <p className='text-red-500 text-center'>{errorcode}</p>}
 					{loading && <p>Loading...</p>}
 					{!loading && (
 						<>
@@ -140,7 +160,9 @@ const RegisterForm = () => {
 								name='first_name'
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>First Name</FormLabel>
+										<FormLabel>
+											<em className='text-red-500'>*</em> First Name
+										</FormLabel>
 										<FormControl>
 											<Input type='text' placeholder='First Name' {...field} />
 										</FormControl>
@@ -153,7 +175,9 @@ const RegisterForm = () => {
 								name='last_name'
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Last Name</FormLabel>
+										<FormLabel>
+											<em className='text-red-500'>*</em> Last Name
+										</FormLabel>
 										<FormControl>
 											<Input type='text' placeholder='Last Name' {...field} />
 										</FormControl>
@@ -161,12 +185,31 @@ const RegisterForm = () => {
 									</FormItem>
 								)}
 							/>
+							{/* <FormField
+								control={form.control}
+								name='picture'
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Profile Picture</FormLabel>
+										<FormControl>
+											<Input
+												type='file'
+												placeholder='Profile Picture'
+												{...field}
+											/>
+										</FormControl>
+										<FormMessage />
+									</FormItem>
+								)}
+							/> */}
 							<FormField
 								control={form.control}
 								name='email'
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Email Address</FormLabel>
+										<FormLabel>
+											<em className='text-red-500'>*</em> Email Address
+										</FormLabel>
 										<FormControl>
 											<Input
 												type='email'
@@ -183,7 +226,9 @@ const RegisterForm = () => {
 								name='password'
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Password</FormLabel>
+										<FormLabel>
+											<em className='text-red-500'>*</em> Password
+										</FormLabel>
 										<FormControl>
 											<PasswordInput
 												id='password'
@@ -201,7 +246,9 @@ const RegisterForm = () => {
 								name='confirm_password'
 								render={({ field }) => (
 									<FormItem>
-										<FormLabel>Confirm Password</FormLabel>
+										<FormLabel>
+											<em className='text-red-500'>*</em> Confirm Password
+										</FormLabel>
 										<FormControl>
 											<PasswordInput
 												id='confirm_password'

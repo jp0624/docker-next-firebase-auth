@@ -16,6 +16,7 @@ import { Input } from './ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { updatePassword } from 'firebase/auth'
 const passwordValidation = new RegExp(
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*?])[A-Za-z\d!@#$%^&*?]{8,}$/
 )
@@ -68,16 +69,17 @@ const ProfileForm = () => {
 	const onSubmit = handleFormSubmit(() => {
 		updateUser(...userData)
 	})
+	const onSubmitUpdatePassword = () => {}
 	return (
 		<>
-			<h1 className='text-3xl font-bold mb-2 text-left w-2/3 lg:w-1/3'>
-				Profile Form
-			</h1>
 			<Form {...form}>
 				<form
 					onSubmit={onSubmit}
-					className='space-y-8 flex flex-col flex-items-center justify-center align-center w-2/3 lg:w-1/3'
+					className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
 				>
+					<h1 className='text-3xl pt-2 font-bold  text-left whitespace-nowrap'>
+						Update Profile
+					</h1>
 					<FormField
 						control={form.control}
 						name='first_name'
@@ -122,6 +124,15 @@ const ProfileForm = () => {
 							</FormItem>
 						)}
 					/>
+					<Button type='submit'>Update Profile</Button>
+				</form>
+				<form
+					onSubmit={onSubmitUpdatePassword}
+					className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
+				>
+					<h1 className='text-3xl pt-5 border-t-2 font-bold text-left whitespace-nowrap'>
+						Update Password
+					</h1>
 					<FormField
 						control={form.control}
 						name='current_password'
@@ -176,7 +187,7 @@ const ProfileForm = () => {
 							</FormItem>
 						)}
 					/>
-					<Button type='submit'>Update Profile</Button>
+					<Button type='submit'>Change Password</Button>
 				</form>
 			</Form>
 		</>

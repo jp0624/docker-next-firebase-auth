@@ -4,6 +4,7 @@ import {
 	createUserWithEmailAndPassword,
 	onAuthStateChanged,
 	signInWithEmailAndPassword,
+	reauthenticateWithCredential,
 	signOut,
 } from 'firebase/auth'
 import { db } from '@/services/firebase'

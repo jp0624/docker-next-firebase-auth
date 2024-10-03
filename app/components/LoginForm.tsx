@@ -5,7 +5,6 @@ import { Button } from './ui/button'
 import {
 	Form,
 	FormControl,
-	// FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -19,7 +18,12 @@ import { auth } from '@/services/firebase'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { INTERIOR_ROUTE } from '@/constants/routes'
+import {
+	INTERIOR_ROUTE,
+	REGISTER_ROUTE,
+	RESET_PASSWORD_ROUTE,
+} from '@/constants/routes'
+import Link from 'next/link'
 
 const formSchema = z.object({
 	email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -43,7 +47,9 @@ const LoginForm = () => {
 		setLoading(true)
 		setErrorcode(null)
 		signInWithEmailAndPassword(auth, values.email, values.password)
-			.then(({ user }) => {})
+			.then(({ user }) => {
+				router.push(INTERIOR_ROUTE)
+			})
 			.catch((error) => {
 				const errorCode = error.code
 				const errorMessage = error.message
@@ -53,7 +59,6 @@ const LoginForm = () => {
 				console.log('errorMessage: ', errorMessage)
 				setLoading(false)
 			})
-			.finally(() => router.push(INTERIOR_ROUTE))
 	}
 	return (
 		<>
@@ -101,6 +106,18 @@ const LoginForm = () => {
 						Log In
 					</Button>
 				</form>
+				<p className='text-sm pt-5'>
+					Don't have an account?
+					<Link href={REGISTER_ROUTE}>
+						<span className='underline px-2'>Register Here</span>
+					</Link>
+				</p>
+				<p className='text-sm pt-2'>
+					Trouble logging into your account?
+					<Link href={RESET_PASSWORD_ROUTE}>
+						<span className='underline px-2'>Reset Password</span>
+					</Link>
+				</p>
 			</Form>
 		</>
 	)
