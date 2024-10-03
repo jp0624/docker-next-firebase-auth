@@ -21,58 +21,58 @@ const passwordValidation = new RegExp(
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*?])[A-Za-z\d!@#$%^&*?]{8,}$/
 )
 
-const formSchema = z
-	.object({
-		email: z.string().email({ message: 'Please enter a valid email address.' }),
-		current_password: z.string().trim().min(1, 'Please fill out this field'),
-		new_password: z
-			.string()
-			.trim()
-			.min(1, { message: 'Must have at least 1 character' })
-			.regex(passwordValidation, {
-				message:
-					"Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one of these special character '!@#$%^&*?'.",
-			}),
-		confirm_password: z.string().trim().min(1, 'Please fill out this field'),
-		first_name: z.string().trim().min(1, 'Please fill out this field'),
-		last_name: z.string().trim().min(1, 'Please fill out this field'),
-	})
-	.superRefine(({ confirm_password, new_password }, ctx) => {
-		if (confirm_password !== new_password) {
-			ctx.addIssue({
-				code: 'custom',
-				message: 'The passwords do not match',
-				path: ['confirm_password'],
-			})
-		}
-	})
+const profileFormSchema = z.object({
+	email: z.string().email({ message: 'Please enter a valid email address.' }),
+	first_name: z.string().trim().min(1, 'Please fill out this field'),
+	last_name: z.string().trim().min(1, 'Please fill out this field'),
+})
+const passwordFormSchema = z.object({
+	first_name: z.string().trim().min(1, 'Please enter your current password'),
+	new_password: z
+		.string()
+		.trim()
+		.min(1, { message: 'Must have at least 1 character' })
+		.regex(passwordValidation, {
+			message:
+				"Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one of these special character '!@#$%^&*?'.",
+		}),
+	confirm_password: z.string().trim().min(1, 'Please fill out this field'),
+})
 
 const ProfileForm = () => {
 	const { user, userData, updateUser } = useAuth()
 
-	const defaultValues = {
+	const profileDefaultValues = {
 		email: '',
-		current_password: '',
-		new_password: '',
-		confirm_password: '',
 		first_name: '',
 		last_name: '',
 	}
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
-		defaultValues,
+	const passwordDefaultValues = {
+		new_password: '',
+		current_password: '',
+		confirm_password: '',
+	}
+	const profileForm = useForm<z.infer<typeof profileFormSchema>>({
+		resolver: zodResolver(profileFormSchema),
+		defaultValues: profileDefaultValues,
 		mode: 'onChange',
 		values: userData,
 	})
-	const { handleSubmit: handleFormSubmit } = form
+	const passwordForm = useForm<z.infer<typeof passwordFormSchema>>({
+		resolver: zodResolver(passwordFormSchema),
+		defaultValues: passwordDefaultValues,
+		mode: 'onChange',
+		values: userData,
+	})
+	const { handleSubmit: handleFormSubmit } = profileForm
 
 	const onSubmit = handleFormSubmit(() => {
-		updateUser(...userData)
+		// updateUser(...userData)
 	})
 	const onSubmitUpdatePassword = () => {}
 	return (
 		<>
-			<Form {...form}>
+			<Form {...profileForm}>
 				<form
 					onSubmit={onSubmit}
 					className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
@@ -81,7 +81,7 @@ const ProfileForm = () => {
 						Update Profile
 					</h1>
 					<FormField
-						control={form.control}
+						control={profileForm.control}
 						name='first_name'
 						render={({ field }) => (
 							<FormItem>
@@ -94,7 +94,7 @@ const ProfileForm = () => {
 						)}
 					/>
 					<FormField
-						control={form.control}
+						control={profileForm.control}
 						name='last_name'
 						render={({ field }) => (
 							<FormItem>
@@ -112,7 +112,7 @@ const ProfileForm = () => {
 						)}
 					/>
 					<FormField
-						control={form.control}
+						control={profileForm.control}
 						name='email'
 						render={({ field }) => (
 							<FormItem>
@@ -134,7 +134,7 @@ const ProfileForm = () => {
 						Update Password
 					</h1>
 					<FormField
-						control={form.control}
+						control={passwordForm.control}
 						name='current_password'
 						render={({ field }) => (
 							<FormItem>
@@ -152,7 +152,7 @@ const ProfileForm = () => {
 						)}
 					/>
 					<FormField
-						control={form.control}
+						control={passwordForm.control}
 						name='new_password'
 						render={({ field }) => (
 							<FormItem>
@@ -170,7 +170,7 @@ const ProfileForm = () => {
 						)}
 					/>
 					<FormField
-						control={form.control}
+						control={passwordForm.control}
 						name='confirm_password'
 						render={({ field }) => (
 							<FormItem>
