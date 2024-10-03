@@ -17,6 +17,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { updatePassword } from 'firebase/auth'
+import { useState } from 'react'
 const passwordValidation = new RegExp(
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*?])[A-Za-z\d!@#$%^&*?]{8,}$/
 )
@@ -26,21 +27,35 @@ const profileFormSchema = z.object({
 	first_name: z.string().trim().min(1, 'Please fill out this field'),
 	last_name: z.string().trim().min(1, 'Please fill out this field'),
 })
-const passwordFormSchema = z.object({
-	first_name: z.string().trim().min(1, 'Please enter your current password'),
-	new_password: z
-		.string()
-		.trim()
-		.min(1, { message: 'Must have at least 1 character' })
-		.regex(passwordValidation, {
-			message:
-				"Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one of these special character '!@#$%^&*?'.",
-		}),
-	confirm_password: z.string().trim().min(1, 'Please fill out this field'),
-})
+const passwordFormSchema = z
+	.object({
+		current_password: z
+			.string()
+			.trim()
+			.min(1, 'Please enter your current password'),
+		new_password: z
+			.string()
+			.trim()
+			.min(1, { message: 'Must have at least 1 character' })
+			.regex(passwordValidation, {
+				message:
+					"Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one of these special character '!@#$%^&*?'.",
+			}),
+		confirm_password: z.string().trim().min(1, 'Please fill out this field'),
+	})
+	.superRefine(({ confirm_password, new_password }, ctx) => {
+		if (confirm_password !== new_password) {
+			ctx.addIssue({
+				code: 'custom',
+				message: 'The passwords do not match',
+				path: ['confirm_password'],
+			})
+		}
+	})
 
 const ProfileForm = () => {
 	const { user, userData, updateUser } = useAuth()
+	const [loading, setLoading] = useState<boolean>(false)
 
 	const profileDefaultValues = {
 		email: '',
@@ -61,20 +76,26 @@ const ProfileForm = () => {
 	const passwordForm = useForm<z.infer<typeof passwordFormSchema>>({
 		resolver: zodResolver(passwordFormSchema),
 		defaultValues: passwordDefaultValues,
-		mode: 'onChange',
-		values: userData,
 	})
-	const { handleSubmit: handleFormSubmit } = profileForm
 
-	const onSubmit = handleFormSubmit(() => {
-		// updateUser(...userData)
-	})
-	const onSubmitUpdatePassword = () => {}
+	const onSubmitUpdateProfile = (
+		profileValues: z.infer<typeof profileFormSchema>
+	) => {
+		console.log('profileValues: ', profileValues)
+		if (loading) return
+	}
+	const onSubmitUpdatePassword = (
+		passwordValues: z.infer<typeof passwordFormSchema>
+	) => {
+		console.log('passwordValues: ', passwordValues)
+		if (loading) return
+	}
+
 	return (
 		<>
 			<Form {...profileForm}>
 				<form
-					onSubmit={onSubmit}
+					onSubmit={profileForm.handleSubmit(onSubmitUpdateProfile)}
 					className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
 				>
 					<h1 className='text-3xl pt-2 font-bold  text-left whitespace-nowrap'>
@@ -126,8 +147,11 @@ const ProfileForm = () => {
 					/>
 					<Button type='submit'>Update Profile</Button>
 				</form>
+			</Form>
+
+			<Form {...passwordForm}>
 				<form
-					onSubmit={onSubmitUpdatePassword}
+					onSubmit={passwordForm.handleSubmit(onSubmitUpdatePassword)}
 					className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
 				>
 					<h1 className='text-3xl pt-5 border-t-2 font-bold text-left whitespace-nowrap'>

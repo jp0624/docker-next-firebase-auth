@@ -22,19 +22,19 @@ import { addDoc, collection } from 'firebase/firestore'
 import { useRouter } from 'next/navigation'
 import { INTERIOR_ROUTE } from '@/constants/routes'
 
-const passwordValidation = new RegExp(
+const PASSWORD_VALIDATION = new RegExp(
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&,.#/<>?;':=_+])[A-Za-z\d#@$!%*?&,./<>?;':=_+]{8,}$/
 )
-const emailValidation = new RegExp(
+const EMAIL_VALIDATION = new RegExp(
 	/^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})$/
 )
-const MAX_UPLOAD_SIZE = 10 * 1024 * 1024
-const ACCEPTED_FILE_TYPES = [
-	'image/jpeg',
-	'image/jpg',
-	'image/png',
-	'image/webp',
-]
+// const MAX_UPLOAD_SIZE = 10 * 1024 * 1024
+// const ACCEPTED_FILE_TYPES = [
+// 	'image/jpeg',
+// 	'image/jpg',
+// 	'image/png',
+// 	'image/webp',
+// ]
 
 const formSchema = z
 	.object({
@@ -42,7 +42,7 @@ const formSchema = z
 			.string()
 			.trim()
 			.min(8, { message: 'Must have at least 8 characters' })
-			.regex(emailValidation, {
+			.regex(EMAIL_VALIDATION, {
 				message: 'Please enter a valid email address.',
 			})
 			.email({ message: 'Please enter a valid email address.' }),
@@ -50,7 +50,7 @@ const formSchema = z
 			.string()
 			.trim()
 			.min(1, { message: 'Must have at least 1 character' })
-			.regex(passwordValidation, {
+			.regex(PASSWORD_VALIDATION, {
 				message:
 					"Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one of these special character '!@#$%^&*?'.",
 			}),
@@ -119,7 +119,7 @@ const RegisterForm = () => {
 				}
 				const userRef = collection(db, 'users', uid, 'data')
 				try {
-					const docRef = await addDoc(userRef, userObj)
+					await addDoc(userRef, userObj)
 				} catch (e) {
 					console.error('Error adding document: ', e)
 				} finally {
