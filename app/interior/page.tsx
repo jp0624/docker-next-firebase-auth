@@ -13,12 +13,18 @@ const InteriorPage = () => {
 		<>
 			<ProtectedRoute path={'/interior'}>
 				<div>
-					{!userData?.display_name ? (
+					{userData.uid && (
 						<>
 							<p className='text-center text-xl border-b-2'>
 								Welcome back,{' '}
 								<em className='font-bold'>
-									{userData?.first_name} {userData?.last_name}!
+									{userData?.display_name ? (
+										<>{userData?.display_name}</>
+									) : (
+										<>
+											{userData?.first_name} {userData?.last_name}!
+										</>
+									)}
 								</em>
 							</p>
 							<pre className='text-xs p-2'>
@@ -29,22 +35,9 @@ const InteriorPage = () => {
 									className='w-full'
 									onClick={() => router.push(PROFILE_ROUTE)}
 								>
-									View Profile Details
+									View Profile
 								</Button>
 							</p>
-						</>
-					) : (
-						<>
-							<p className='text-center text-xl border-b-2'>
-								Welcome back,{' '}
-								<em className='font-bold'>{userData?.display_name}!</em>
-							</p>
-							<p className='text-xs text-center'>
-								You're signed in through google.
-							</p>
-							<pre className='text-xs p-2'>
-								{JSON.stringify(userData, null, 2)}
-							</pre>
 						</>
 					)}
 				</div>
