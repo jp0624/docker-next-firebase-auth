@@ -257,7 +257,7 @@ const ProfileForm = () => {
 					<li className='!mt-1 border-b-2 py-2'>
 						First Name: {userData?.first_name}
 					</li>
-					<li className='!mt-1 py-2'>Last Name: {userData?.last_name}</li>
+					<li className='!mt-1'>Last Name: {userData?.last_name}</li>
 				</ul>
 			)}
 			{editStatus === 'profile' && (

@@ -63,7 +63,7 @@ const LoginForm = () => {
 				errorCode === 'auth/invalid-credential' &&
 					setErrorcode('Incorrect email or password')
 				errorCode === 'auth/wrong-password' &&
-					setErrorcode('Incorrect password or email linked to Google provider')
+					setErrorcode('Incorrect password or email used with Google sign-in')
 				console.log('errorCode: ', errorCode)
 				console.log('errorMessage: ', errorMessage)
 				setLoading(false)
