@@ -1,5 +1,11 @@
 'use client'
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, {
+	SetStateAction,
+	createContext,
+	useContext,
+	useEffect,
+	useState,
+} from 'react'
 import {
 	createUserWithEmailAndPassword,
 	onAuthStateChanged,
@@ -64,7 +70,7 @@ export const AuthContextProvider = ({
 		// })
 		onSnapshot(doc(db, 'users', user.uid), (doc) => {
 			console.log('Current data: ', doc.data())
-			setUserData(doc.data())
+			setUserData(doc.data() as SetStateAction<{}>)
 		})
 	}, [user?.uid])
 
