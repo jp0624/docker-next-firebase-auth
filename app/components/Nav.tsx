@@ -19,9 +19,6 @@ const Nav = () => {
 			<ul className='flex justify-between gap-5 pr-5 md:pr-10 text-sm'>
 				{auth.currentUser ? (
 					<>
-						<Link href={INTERIOR_ROUTE}>
-							<li>Dashboard</li>
-						</Link>
 						<Link href={PROFILE_ROUTE}>
 							<li>Profile</li>
 						</Link>
