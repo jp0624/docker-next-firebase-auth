@@ -22,11 +22,9 @@ const Nav = () => {
 						<Link href={INTERIOR_ROUTE}>
 							<li>Dashboard</li>
 						</Link>
-						{!userData?.display_name && (
-							<Link href={PROFILE_ROUTE}>
-								<li>Profile</li>
-							</Link>
-						)}
+						<Link href={PROFILE_ROUTE}>
+							<li>Profile</li>
+						</Link>
 						<li>
 							<SignOutButton />
 						</li>

@@ -6,7 +6,6 @@ import { Button } from './ui/button'
 import {
 	Form,
 	FormControl,
-	// FormDescription,
 	FormField,
 	FormItem,
 	FormLabel,
@@ -21,15 +20,14 @@ import {
 	reauthenticateWithCredential,
 	updateEmail,
 	updatePassword,
-	verifyBeforeUpdateEmail,
 } from 'firebase/auth'
 import { useState } from 'react'
 import { Edit, X } from 'lucide-react'
-import { auth, db } from '@/services/firebase'
+import { db } from '@/services/firebase'
 import { EmailAuthProvider } from 'firebase/auth/web-extension'
-import { INTERIOR_ROUTE, PROFILE_ROUTE } from '@/constants/routes'
+import { PROFILE_ROUTE } from '@/constants/routes'
 import { useRouter } from 'next/navigation'
-import { addDoc, collection, doc, updateDoc } from 'firebase/firestore'
+import { doc, updateDoc } from 'firebase/firestore'
 const passwordValidation = new RegExp(
 	/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*?])[A-Za-z\d!@#$%^&*?]{8,}$/
 )
