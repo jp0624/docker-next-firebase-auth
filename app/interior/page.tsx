@@ -39,7 +39,12 @@ const InteriorPage = () => {
 								Welcome back,{' '}
 								<em className='font-bold'>{userData?.display_name}!</em>
 							</p>
-							<p>You're signed in through google.</p>
+							<p className='text-xs text-center'>
+								You're signed in through google.
+							</p>
+							<pre className='text-xs p-2'>
+								{JSON.stringify(userData, null, 2)}
+							</pre>
 						</>
 					)}
 				</div>

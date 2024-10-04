@@ -9,7 +9,7 @@ import {
 } from 'firebase/auth'
 import { db } from '@/services/firebase'
 import { auth } from './firebase'
-import { addDoc, collection, onSnapshot } from 'firebase/firestore'
+import { addDoc, collection, doc, getDoc, onSnapshot } from 'firebase/firestore'
 
 // User data type interface
 interface UserType {
@@ -56,21 +56,31 @@ export const AuthContextProvider = ({
 	useEffect(() => {
 		if (!user?.uid) return
 
-		const userRef = collection(db, 'users', user.uid, 'data')
-		const unsubscribe = onSnapshot(userRef, (snapshot) => {
-			let userData = {}
-			snapshot.forEach((doc) => {
-				console.log(`doc: `, doc.data())
-				userData = { ...doc.data() }
-			})
-
-			setUserData(userData)
-			console.log('Updated userData: ', userData)
+		// const userDocRef = doc(db, 'users', user.uid)
+		// getDoc(userDocRef).then((userDocSnap) => {
+		// 	if (userDocSnap.exists()) {
+		// 		setUserData(userDocSnap.data())
+		// 	}
+		// })
+		onSnapshot(doc(db, 'users', user.uid), (doc) => {
+			console.log('Current data: ', doc.data())
+			setUserData(doc.data())
 		})
+	}, [user?.uid])
 
-		return () => unsubscribe()
-	}, [user])
+	// const userRef = collection(db, 'users', user.uid)
+	// const unsubscribe = onSnapshot(userRef, (snapshot) => {
+	// 	let userData = {}
+	// 	snapshot.forEach((doc) => {
+	// 		console.log(`doc: `, doc.data())
+	// 		userData = { ...doc.data() }
+	// 	})
 
+	// 	setUserData(userData)
+	// 	console.log('Updated userData: ', userData)
+	// })
+
+	// return () => unsubscribe()
 	const signUp = (email: string, password: string) => {
 		return createUserWithEmailAndPassword(auth, email, password)
 	}

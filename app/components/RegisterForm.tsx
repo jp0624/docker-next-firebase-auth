@@ -18,7 +18,7 @@ import { z } from 'zod'
 import { auth, db } from '@/services/firebase'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { useState } from 'react'
-import { addDoc, collection } from 'firebase/firestore'
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore'
 import { useRouter } from 'next/navigation'
 import { INTERIOR_ROUTE } from '@/constants/routes'
 
@@ -105,21 +105,26 @@ const RegisterForm = () => {
 			.then(async ({ user }) => {
 				console.log('user: ', user)
 
-				// Signed in
-				const uid = user.uid
-				console.log('uid: ', uid)
-
 				// Save to Firestore
-				let userObj = {
-					email: user.email,
-					uid: user.uid,
-					first_name: form.getValues('first_name'),
-					last_name: form.getValues('last_name'),
-					createdAt: new Date(),
-				}
-				const userRef = collection(db, 'users', uid, 'data')
+				// let userObj = {
+				// 	email: user.email,
+				// 	uid: user.uid,
+				// 	first_name: form.getValues('first_name'),
+				// 	last_name: form.getValues('last_name'),
+				// 	createdAt: new Date(),
+				// }
+
+				// const userRef = collection(db, 'users', user.uid, 'data')
+
 				try {
-					await addDoc(userRef, userObj)
+					// await addDoc(userRef, userObj)
+					await setDoc(doc(db, 'users', user.uid), {
+						email: user.email,
+						uid: user.uid,
+						first_name: form.getValues('first_name'),
+						last_name: form.getValues('last_name'),
+						createdAt: new Date(),
+					})
 					router.push(INTERIOR_ROUTE)
 				} catch (e) {
 					console.error('Error adding document: ', e)
@@ -147,13 +152,15 @@ const RegisterForm = () => {
 					onSubmit={form.handleSubmit(onSubmit)}
 					className='space-y-8 flex flex-col flex-items-center justify-center align-center w-2/3 lg:w-1/3'
 				>
-					<p className='text-sm pt-2 text-right'>
-						<em className='text-red-500'>*</em> Represents Required Fields
-					</p>
-					{errorcode && <p className='text-red-500 text-center'>{errorcode}</p>}
 					{loading && <p>Loading...</p>}
 					{!loading && (
 						<>
+							<p className='text-sm pt-2 text-right'>
+								<em className='text-red-500'>*</em> Represents Required Fields
+							</p>
+							{errorcode && (
+								<p className='text-red-500 text-center'>{errorcode}</p>
+							)}
 							<FormField
 								control={form.control}
 								name='first_name'

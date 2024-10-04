@@ -62,6 +62,8 @@ const LoginForm = () => {
 				const errorMessage = error.message
 				errorCode === 'auth/invalid-credential' &&
 					setErrorcode('Incorrect email or password')
+				errorCode === 'auth/wrong-password' &&
+					setErrorcode('Incorrect password')
 				console.log('errorCode: ', errorCode)
 				console.log('errorMessage: ', errorMessage)
 				setLoading(false)
@@ -94,6 +96,7 @@ const LoginForm = () => {
 				const errorMessage = error.message
 				errorCode === 'auth/invalid-credential' &&
 					setErrorcode('Incorrect email or password')
+
 				console.log('errorCode: ', errorCode)
 				console.log('errorMessage: ', errorMessage)
 			})
