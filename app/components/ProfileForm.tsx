@@ -185,19 +185,6 @@ const ProfileForm = () => {
 		}
 	}
 
-	// const reauthenticateUser = async () => {
-	// 	try {
-	// 		const credential = EmailAuthProvider.credential(
-	// 			emailValues.email,
-	// 			emailValues.active_password
-	// 		)
-	// 		reauthenticateWithCredential(user, credential).then(() => {
-	// 			console.log('user: ', user)
-	// 		})
-	// 	} catch (error) {
-	// 		console.log('error: ', error)
-	// 	}
-	// }
 	const onSubmitUpdatePassword = (
 		passwordValues: z.infer<typeof passwordFormSchema>
 	) => {
@@ -262,8 +249,15 @@ const ProfileForm = () => {
 			</h1>
 			{editStatus !== 'profile' && (
 				<ul className='space-y-8 flex flex-col pt-2 w-2/3 lg:w-1/3'>
-					<li>First Name: {userData?.first_name}</li>
-					<li className='!mt-1 border-t-2'>Last Name: {userData?.last_name}</li>
+					{userData.display_name && (
+						<li className='!mt-1 border-b-2 py-2'>
+							Display Name: {userData?.display_name}
+						</li>
+					)}
+					<li className='!mt-1 border-b-2 py-2'>
+						First Name: {userData?.first_name}
+					</li>
+					<li className='!mt-1 py-2'>Last Name: {userData?.last_name}</li>
 				</ul>
 			)}
 			{editStatus === 'profile' && (
