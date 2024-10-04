@@ -30,7 +30,7 @@ import {
 import Link from 'next/link'
 import { Chrome, GoalIcon } from 'lucide-react'
 import Google from 'next-auth/providers/google'
-import { addDoc, collection } from 'firebase/firestore'
+import { addDoc, collection, doc, setDoc } from 'firebase/firestore'
 
 const formSchema = z.object({
 	email: z.string().email({ message: 'Please enter a valid email address.' }),
@@ -86,6 +86,20 @@ const LoginForm = () => {
 				const userRef = collection(db, 'users', user.uid, 'data')
 				try {
 					await addDoc(userRef, userObj)
+					router.push(INTERIOR_ROUTE)
+				} catch (e) {
+					console.error('Error adding document: ', e)
+				}
+				try {
+					// await addDoc(userRef, userObj)
+					await setDoc(doc(db, 'users', user.uid), {
+						email: user.email,
+						uid: user.uid,
+						first_name: '',
+						last_name: '',
+						display_name: user.displayName,
+						createdAt: new Date(),
+					})
 					router.push(INTERIOR_ROUTE)
 				} catch (e) {
 					console.error('Error adding document: ', e)

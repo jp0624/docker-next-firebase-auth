@@ -2,6 +2,7 @@
 
 import {
 	HOME_ROUTE,
+	INTERIOR_ROUTE,
 	LOGIN_ROUTE,
 	PROFILE_ROUTE,
 	REGISTER_ROUTE,
@@ -18,6 +19,9 @@ const Nav = () => {
 			<ul className='flex justify-between gap-5 pr-5 md:pr-10 text-sm'>
 				{auth.currentUser ? (
 					<>
+						<Link href={INTERIOR_ROUTE}>
+							<li>Dashboard</li>
+						</Link>
 						{!userData?.display_name && (
 							<Link href={PROFILE_ROUTE}>
 								<li>Profile</li>
