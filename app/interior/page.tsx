@@ -13,7 +13,7 @@ const InteriorPage = () => {
 		<>
 			<ProtectedRoute path={'/interior'}>
 				<div>
-					{userData.uid && (
+					{userData?.uid && (
 						<>
 							<p className='text-center text-xl border-b-2'>
 								Welcome back,{' '}

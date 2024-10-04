@@ -63,15 +63,14 @@ const LoginForm = () => {
 				errorCode === 'auth/invalid-credential' &&
 					setErrorcode('Incorrect email or password')
 				errorCode === 'auth/wrong-password' &&
-					setErrorcode('Incorrect password or email used for google sign-up')
+					setErrorcode('Incorrect password or email linked to Google provider')
 				console.log('errorCode: ', errorCode)
 				console.log('errorMessage: ', errorMessage)
 				setLoading(false)
 			})
 	}
-	const signUpGoogle = () => {
-		const provider = new GoogleAuthProvider()
-		signInWithPopup(auth, provider)
+	const signUpGoogle = async () => {
+		await signInWithPopup(auth, new GoogleAuthProvider())
 			.then(async ({ user }) => {
 				console.log('user: ', user)
 

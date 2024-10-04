@@ -311,24 +311,28 @@ const ProfileForm = () => {
 				</Form>
 			)}
 			<h1 className='text-3xl pt-5 font-bold  text-left whitespace-nowrap w-2/3 lg:w-1/3'>
-				{editStatus === 'email' ? (
-					<Button
-						onClick={() => {
-							setEditStatus(null)
-							setErrorcode(null)
-						}}
-						className='bg-red-800 p-1 h-5 w-5'
-					>
-						<X className='h-4 w-4' />
-					</Button>
-				) : (
-					<Button
-						onClick={() => setEditStatus('email')}
-						className=' p-1 h-5 w-5'
-					>
-						<Edit className='h-4 w-4' />
-					</Button>
-				)}{' '}
+				{!userData.display_name && (
+					<>
+						{editStatus === 'email' ? (
+							<Button
+								onClick={() => {
+									setEditStatus(null)
+									setErrorcode(null)
+								}}
+								className='bg-red-800 p-1 h-5 w-5'
+							>
+								<X className='h-4 w-4' />
+							</Button>
+						) : (
+							<Button
+								onClick={() => setEditStatus('email')}
+								className=' p-1 h-5 w-5'
+							>
+								<Edit className='h-4 w-4' />
+							</Button>
+						)}{' '}
+					</>
+				)}
 				Email Address
 			</h1>
 			{editStatus !== 'email' && (
@@ -385,94 +389,97 @@ const ProfileForm = () => {
 				</Form>
 			)}
 
-			<h1 className='text-3xl pt-5 font-bold  text-left whitespace-nowrap w-2/3 lg:w-1/3'>
-				{editStatus === 'password' ? (
-					<Button
-						onClick={() => {
-							setEditStatus(null)
-							setErrorcode(null)
-						}}
-						className='bg-red-800 p-1 h-5 w-5'
-					>
-						<X className='h-4 w-4' />
-					</Button>
-				) : (
-					<Button
-						onClick={() => setEditStatus('password')}
-						className=' p-1 h-5 w-5'
-					>
-						<Edit className='h-4 w-4' />
-					</Button>
-				)}{' '}
-				Password
-			</h1>
-
-			{editStatus === 'password' && (
-				<Form {...passwordForm}>
-					{errorcode && editStatus === 'password' ? (
-						<p className='text-red-500'>{errorcode}</p>
-					) : null}
-					<form
-						onSubmit={passwordForm.handleSubmit(onSubmitUpdatePassword)}
-						className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
-					>
-						<FormField
-							control={passwordForm.control}
-							name='current_password'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Current Password</FormLabel>
-									<FormControl>
-										<PasswordInput
-											id='current_password'
-											autoComplete='current-password'
-											required={true}
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={passwordForm.control}
-							name='new_password'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>New Password</FormLabel>
-									<FormControl>
-										<PasswordInput
-											id='new_password'
-											autoComplete='new-password'
-											required={true}
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<FormField
-							control={passwordForm.control}
-							name='confirm_password'
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Confirm Password</FormLabel>
-									<FormControl>
-										<PasswordInput
-											id='confirm_password'
-											autoComplete='confirm-password'
-											required={true}
-											{...field}
-										/>
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
-						<Button type='submit'>Change Password</Button>
-					</form>
-				</Form>
+			{!userData.display_name && (
+				<>
+					<h1 className='text-3xl pt-5 font-bold  text-left whitespace-nowrap w-2/3 lg:w-1/3'>
+						{editStatus === 'password' ? (
+							<Button
+								onClick={() => {
+									setEditStatus(null)
+									setErrorcode(null)
+								}}
+								className='bg-red-800 p-1 h-5 w-5'
+							>
+								<X className='h-4 w-4' />
+							</Button>
+						) : (
+							<Button
+								onClick={() => setEditStatus('password')}
+								className=' p-1 h-5 w-5'
+							>
+								<Edit className='h-4 w-4' />
+							</Button>
+						)}{' '}
+						Password
+					</h1>
+					{editStatus === 'password' && (
+						<Form {...passwordForm}>
+							{errorcode && editStatus === 'password' ? (
+								<p className='text-red-500'>{errorcode}</p>
+							) : null}
+							<form
+								onSubmit={passwordForm.handleSubmit(onSubmitUpdatePassword)}
+								className='space-y-8 flex flex-col pt-2 flex-items-center justify-center align-center w-2/3 lg:w-1/3'
+							>
+								<FormField
+									control={passwordForm.control}
+									name='current_password'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Current Password</FormLabel>
+											<FormControl>
+												<PasswordInput
+													id='current_password'
+													autoComplete='current-password'
+													required={true}
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={passwordForm.control}
+									name='new_password'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>New Password</FormLabel>
+											<FormControl>
+												<PasswordInput
+													id='new_password'
+													autoComplete='new-password'
+													required={true}
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<FormField
+									control={passwordForm.control}
+									name='confirm_password'
+									render={({ field }) => (
+										<FormItem>
+											<FormLabel>Confirm Password</FormLabel>
+											<FormControl>
+												<PasswordInput
+													id='confirm_password'
+													autoComplete='confirm-password'
+													required={true}
+													{...field}
+												/>
+											</FormControl>
+											<FormMessage />
+										</FormItem>
+									)}
+								/>
+								<Button type='submit'>Change Password</Button>
+							</form>
+						</Form>
+					)}
+				</>
 			)}
 		</>
 	)
