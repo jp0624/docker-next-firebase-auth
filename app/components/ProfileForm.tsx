@@ -126,8 +126,9 @@ const ProfileForm = () => {
 		updateDoc(doc(db, 'users', user.uid), userObj)
 			.then((result) => {
 				console.log('Updated User: ', result)
-				router.push(PROFILE_ROUTE)
 				setEditStatus(null)
+				setErrorcode(null)
+				router.push(PROFILE_ROUTE)
 			})
 			.catch((error) => {
 				console.log('error.code: ', error.code)
@@ -158,8 +159,9 @@ const ProfileForm = () => {
 								await updateDoc(doc(db, 'users', user.uid), userObj)
 									.then((result) => {
 										console.log('Updated User: ', result)
-										router.push(PROFILE_ROUTE)
 										setEditStatus(null)
+										setErrorcode(null)
+										router.push(PROFILE_ROUTE)
 									})
 									.catch((error) => {
 										console.log('error.code: ', error.code)
@@ -214,8 +216,9 @@ const ProfileForm = () => {
 						updatePassword(auth.currentUser, passwordValues.new_password)
 							.then(() => {
 								console.log('password updated')
-								router.push(PROFILE_ROUTE)
 								setEditStatus(null)
+								setErrorcode(null)
+								router.push(PROFILE_ROUTE)
 							})
 							.catch((error) => {
 								console.log('error.code: ', error.code)
