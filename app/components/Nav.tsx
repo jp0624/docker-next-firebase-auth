@@ -1,19 +1,13 @@
 'use client'
 
-import {
-	HOME_ROUTE,
-	INTERIOR_ROUTE,
-	LOGIN_ROUTE,
-	PROFILE_ROUTE,
-	REGISTER_ROUTE,
-} from '@/constants/routes'
-import { useAuth } from '@/services/authContext'
+import { LOGIN_ROUTE, PROFILE_ROUTE, REGISTER_ROUTE } from '@/constants/routes'
 import Link from 'next/link'
 import SignOutButton from './ui/signout-button'
 import { auth } from '@/services/firebase'
+import { useAuth } from '@/services/authContext'
 
 const Nav = () => {
-	const { user, userData } = useAuth()
+	const { user } = useAuth()
 	return (
 		<>
 			<ul className='flex justify-between gap-5 pr-5 md:pr-10 text-sm'>
