@@ -1,4 +1,4 @@
-# Auth Example Setup Instructions
+# Docker Next Firebase Auth
 
 ## Docker + Next.js + Firebase + FireStore + Tailwind + Shadcn
 
@@ -14,10 +14,10 @@ git clone https://github.com/jp0624/docker-next-firebase-auth.git
 - next open that directory and build with docker:
 
 ```
-docker-compose -up --build
+docker compose up --build
 ```
 
-- the app will takes a minute to download and install necessary files and packes
+- The first build downloads the dependencies.
 - You will then be able to access the app at: http://localhost:3000
 
 ### Setup using Next.JS directly
@@ -35,7 +35,7 @@ git clone https://github.com/jp0624/docker-next-firebase-auth.git
 npm install
 ```
 
-- the app will takes a minute to download and install necessary files and packages
+- Installation downloads the dependencies.
 - then launch the app:
 
 ```
