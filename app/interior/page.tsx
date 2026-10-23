@@ -1,49 +1,6 @@
 'use client'
-
+import Link from 'next/link'
+import { ArrowUpRight, Fingerprint, KeyRound, ShieldCheck, UserRound } from 'lucide-react'
 import ProtectedRoute from '@/components/ProtectedRoutes'
-import { Button } from '@/components/ui/button'
-import { PROFILE_ROUTE } from '@/constants/routes'
-import { useAuth } from '@/services/authContext'
-import { useRouter } from 'next/navigation'
-
-const InteriorPage = () => {
-	const router = useRouter()
-	const { userData } = useAuth()
-	return (
-		<>
-			<ProtectedRoute path={'/interior'}>
-				<div>
-					{userData?.uid && (
-						<>
-							<p className='text-center text-xl border-b-2'>
-								Welcome back,{' '}
-								<em className='font-bold'>
-									{userData?.display_name ? (
-										<>{userData?.display_name}</>
-									) : (
-										<>
-											{userData?.first_name} {userData?.last_name}!
-										</>
-									)}
-								</em>
-							</p>
-							<pre className='text-xs p-2'>
-								{JSON.stringify(userData, null, 2)}
-							</pre>
-							<p className='pt-2 w-full'>
-								<Button
-									className='w-full'
-									onClick={() => router.push(PROFILE_ROUTE)}
-								>
-									View Profile
-								</Button>
-							</p>
-						</>
-					)}
-				</div>
-			</ProtectedRoute>
-		</>
-	)
-}
-
-export default InteriorPage
+import {useAuth} from '@/services/authContext'
+export default function Workspace(){const {user,userData,isDemo,notice}=useAuth();return <ProtectedRoute><section className="workspace page-width"><div className="workspace-heading"><div><p className="eyebrow">YOUR PERSONAL WORKSPACE</p><h1>Good to have you here,<br/><span className="accent">{userData.first_name||user?.displayName?.split(' ')[0]||'friend'}.</span></h1><p>A little context. A clear next step. Everything in its place.</p></div><div className="workspace-avatar">{(userData.first_name||user?.displayName||'Y').slice(0,1).toUpperCase()}<Fingerprint size={30}/></div></div>{isDemo&&<div className="demo-banner"><strong>You’re exploring the demo.</strong><span>This is a fictional account. Profile edits stay in this browser tab and never reach Firebase.</span></div>}{notice&&<p className="error-panel" role="alert">{notice}</p>}<div className="workspace-grid"><article className="account-summary"><div className="section-heading"><h2>Your account</h2><span className="badge">{isDemo?'DEMO':'SIGNED IN'}</span></div><dl><div><dt>Name</dt><dd>{userData.display_name||user?.displayName||'Add your name'}</dd></div><div><dt>Email address</dt><dd>{user?.email}</dd></div><div><dt>Sign-in method</dt><dd>{isDemo?'Sample session':user?.provider==='google.com'?'Google':'Email & password'}</dd></div><div><dt>Email verification</dt><dd>{isDemo?'Not applicable to demo':user?.emailVerified?'Verified':'Not yet verified'}</dd></div></dl><Link href="/profile" className="button primary">Edit your profile <ArrowUpRight size={17}/></Link></article><div className="workspace-next"><p className="eyebrow">MAKE YOURSELF AT HOME</p>{[{icon:UserRound,title:'A name that feels like you',copy:'Set your display name and keep your profile up to date.',url:'/profile',link:'Manage profile'},{icon:KeyRound,title:'A way back in',copy:'Find recovery options and understand how this account works.',url:'/profile#security',link:'Account settings'},{icon:ShieldCheck,title:'Understand the foundation',copy:'Explore setup steps, account flows and the boundaries of this starter.',url:'/guide',link:'Read the guide'}].map(c=><Link key={c.title} href={c.url} className="next-card"><c.icon size={21}/><div><h3>{c.title}</h3><p>{c.copy}</p><span>{c.link} ↗</span></div></Link>)}</div></div></section></ProtectedRoute>}

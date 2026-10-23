@@ -1,36 +1,9 @@
 'use client'
-
-import { LOGIN_ROUTE, PROFILE_ROUTE, REGISTER_ROUTE } from '@/constants/routes'
 import Link from 'next/link'
-import SignOutButton from './ui/signout-button'
-import { auth } from '@/services/firebase'
+import { usePathname } from 'next/navigation'
 import { useAuth } from '@/services/authContext'
-
-const Nav = () => {
-	const { user } = useAuth()
-	return (
-		<>
-			<ul className='flex justify-between gap-5 pr-5 md:pr-10 text-sm'>
-				{auth.currentUser ? (
-					<>
-						<Link href={PROFILE_ROUTE}>
-							<li>Profile</li>
-						</Link>
-						<li>
-							<SignOutButton />
-						</li>
-					</>
-				) : (
-					<>
-						<Link href={LOGIN_ROUTE}>
-							<li>Login</li>
-						</Link>
-						<Link href={REGISTER_ROUTE}>Register</Link>
-					</>
-				)}
-			</ul>
-		</>
-	)
+import SignOutButton from './ui/signout-button'
+export default function Nav() {
+ const {user, loading} = useAuth(); const path = usePathname()
+ return <nav aria-label="Main navigation"><Link href="/#how-it-works">How it works</Link>{!loading && user ? <><Link href="/interior" aria-current={path === '/interior' ? 'page' : undefined}>Workspace</Link><Link href="/profile" aria-current={path === '/profile' ? 'page' : undefined}>Profile</Link><SignOutButton /></> : <><Link href="/login">Sign in</Link><Link className="nav-cta" href="/register">Get started <span aria-hidden="true">↗</span></Link></>}</nav>
 }
-
-export default Nav

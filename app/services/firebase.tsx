@@ -1,23 +1,16 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from 'firebase/app'
+import { getApp, getApps, initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
 import { getFirestore } from 'firebase/firestore'
-import { getStorage } from 'firebase/storage'
-// https://firebase.google.com/docs/web/setup#available-libraries
 
-const firebaseConfig = {
-	apiKey: 'AIzaSyB9cUxN0ZKmBbkOElD7S_0kZMz8tqhebD8',
-	authDomain: 'docker-next-firebase-auth.firebaseapp.com',
-	projectId: 'docker-next-firebase-auth',
-	storageBucket: 'docker-next-firebase-auth.appspot.com',
-	messagingSenderId: '761780253134',
-	appId: '1:761780253134:web:3132feb0160762f0f9fb9f',
+// Firebase web configuration is public; authorization is enforced by Firebase rules.
+// Environment overrides let deployments use their own Firebase project.
+const config = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || 'AIzaSyB9cUxN0ZKmBbkOElD7S_0kZMz8tqhebD8',
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || 'docker-next-firebase-auth.firebaseapp.com',
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'docker-next-firebase-auth',
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '1:761780253134:web:3132feb0160762f0f9fb9f',
 }
-
-const app = initializeApp(firebaseConfig)
-const auth = getAuth(app)
-auth.languageCode = 'en'
-const db = getFirestore(app)
-const storage = getStorage(app)
-
-export { app, auth, db, storage }
+export function getFirebaseServices() {
+  const app = getApps().length ? getApp() : initializeApp(config)
+  return { auth: getAuth(app), db: getFirestore(app) }
+}
