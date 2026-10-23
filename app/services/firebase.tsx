@@ -1,6 +1,5 @@
 import { getApp, getApps, initializeApp } from 'firebase/app'
 import { getAuth } from 'firebase/auth'
-import { getFirestore } from 'firebase/firestore'
 
 // Firebase web configuration is public; authorization is enforced by Firebase rules.
 // Environment overrides let deployments use their own Firebase project.
@@ -12,5 +11,5 @@ const config = {
 }
 export function getFirebaseServices() {
   const app = getApps().length ? getApp() : initializeApp(config)
-  return { auth: getAuth(app), db: getFirestore(app) }
+  return { auth: getAuth(app) }
 }

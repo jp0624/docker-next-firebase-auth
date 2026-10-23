@@ -1,9 +1,7 @@
 'use client'
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react'
 import { createUserWithEmailAndPassword, GoogleAuthProvider, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile, type User } from 'firebase/auth'
-import { doc, getDoc, onSnapshot, serverTimestamp, setDoc } from 'firebase/firestore'
 import { getFirebaseServices } from './firebase'
-import { authError } from '@/lib/auth-errors'
 
 export interface Profile { first_name: string; last_name: string; display_name: string }
 interface SessionUser { uid: string; email: string | null; displayName: string | null; emailVerified: boolean; provider: string }
@@ -20,6 +18,7 @@ const DEMO: Profile = { first_name: 'Alex', last_name: 'Morgan', display_name: '
 const DEMO_KEY = 'authentication-starter-demo-v1'
 const AuthContext = createContext<AuthState | null>(null)
 export function useAuth() { const value = useContext(AuthContext); if (!value) throw new Error('Auth provider is missing'); return value }
+const accountProfile = (displayName: string | null): Profile => { const name = (displayName || '').trim(); const [first_name = '', ...rest] = name.split(/\s+/); return { first_name, last_name: rest.join(' '), display_name: name } }
 const session = (u: User): SessionUser => ({ uid: u.uid, email: u.email, displayName: u.displayName, emailVerified: u.emailVerified, provider: u.providerData[0]?.providerId || 'password' })
 export function AuthContextProvider({ children }: { children: ReactNode }) {
   const [realUser, setRealUser] = useState<SessionUser | null>(null)
@@ -31,42 +30,34 @@ export function AuthContextProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try { const saved = sessionStorage.getItem(DEMO_KEY); if (saved) { const p = JSON.parse(saved); if (typeof p.first_name === 'string' && typeof p.last_name === 'string' && typeof p.display_name === 'string') setDemoProfile(p) } } catch { /* A blocked storage API still permits an in-memory demo. */ }
     const { auth } = getFirebaseServices()
-    return onAuthStateChanged(auth, u => { setRealUser(u ? session(u) : null); setLoading(false) }, () => { setLoading(false); setNotice('Account services are unavailable. The demo is still available.') })
+    return onAuthStateChanged(auth, u => { setRealUser(u ? session(u) : null); setProfile(accountProfile(u?.displayName || null)); setLoading(false) }, () => { setLoading(false); setNotice('Account services are unavailable. The demo is still available.') })
   }, [])
-  useEffect(() => {
-    setProfile(EMPTY); setNotice('')
-    if (!realUser?.uid || isDemo) return
-    const { db } = getFirebaseServices()
-    return onSnapshot(doc(db, 'users', realUser.uid), snapshot => {
-      const p = snapshot.data()
-      setProfile({first_name: p?.first_name || '', last_name: p?.last_name || '', display_name: p?.display_name || realUser.displayName || ''})
-    }, error => setNotice(authError(error)))
-  }, [realUser?.uid, realUser?.displayName, isDemo])
   function saveDemo(p: Profile | null) { setDemoProfile(p); try { if (p) sessionStorage.setItem(DEMO_KEY, JSON.stringify(p)); else sessionStorage.removeItem(DEMO_KEY) } catch { /* State remains usable without storage. */ } }
   async function logIn(email: string, password: string) {
     const { auth } = getFirebaseServices(); const result = await signInWithEmailAndPassword(auth, email, password)
-    setRealUser(session(result.user)); saveDemo(null)
+    setRealUser(session(result.user)); setProfile(accountProfile(result.user.displayName)); saveDemo(null)
   }
   async function signUp(email: string, password: string, p: Profile) {
-    const { auth, db } = getFirebaseServices(); const { user } = await createUserWithEmailAndPassword(auth, email, password)
-    setRealUser(session(user)); saveDemo(null)
-    try { await updateProfile(user, {displayName: p.display_name}); await setDoc(doc(db, 'users', user.uid), {...p, uid: user.uid, createdAt: serverTimestamp()}); setProfile(p) }
-    catch(error) { setNotice(authError(error)) }
+    const { auth } = getFirebaseServices(); const { user } = await createUserWithEmailAndPassword(auth, email, password)
+    // Authentication owns the account name; no document database or profile rules are required.
+    await updateProfile(user, {displayName: p.display_name.slice(0,100)})
+    setRealUser(session(user)); setProfile(accountProfile(user.displayName)); saveDemo(null)
   }
   async function googleSignIn() {
-    const { auth, db } = getFirebaseServices(); const { user } = await signInWithPopup(auth, new GoogleAuthProvider())
-    setRealUser(session(user)); saveDemo(null)
-    try { const ref = doc(db, 'users', user.uid); if (!(await getDoc(ref)).exists()) await setDoc(ref, {...EMPTY, display_name: user.displayName || '', uid: user.uid, createdAt: serverTimestamp()}) }
-    catch(error) { setNotice(authError(error)) }
+    const { auth } = getFirebaseServices(); const { user } = await signInWithPopup(auth, new GoogleAuthProvider())
+    setRealUser(session(user)); setProfile(accountProfile(user.displayName)); saveDemo(null)
   }
   async function logOut() {
     if (demoProfile) { saveDemo(null); return }
     await signOut(getFirebaseServices().auth); setRealUser(null); setProfile(EMPTY)
   }
   async function updateUser(p: Profile) {
-    if (demoProfile) { saveDemo(p); return }
-    const { auth, db } = getFirebaseServices(); if (!auth.currentUser) throw new Error('Sign in required')
-    await setDoc(doc(db, 'users', auth.currentUser.uid), p, {merge: true}); await updateProfile(auth.currentUser, {displayName: p.display_name}); setProfile(p)
+    const name = p.display_name.trim(); if (!name || name.length > 100) throw new Error('A display name of 1–100 characters is required')
+    const next = accountProfile(name)
+    if (demoProfile) { saveDemo(next); return }
+    const { auth } = getFirebaseServices(); if (!auth.currentUser) throw new Error('Sign in required')
+    await updateProfile(auth.currentUser, {displayName: name})
+    setRealUser(session(auth.currentUser)); setProfile(next)
   }
   const value: AuthState = { user: demoProfile ? {uid: 'demo-preview', email: 'alex@example.com', displayName: demoProfile.display_name, emailVerified: false, provider: 'demo'} : realUser,
     userData: demoProfile || profile, loading, isDemo: !!demoProfile, notice: demoProfile ? '' : notice,

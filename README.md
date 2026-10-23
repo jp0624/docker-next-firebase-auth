@@ -41,18 +41,16 @@ These are public client configuration values, not Admin SDK credentials. Never p
 
 1. Enable Email/Password and Google in Firebase Authentication.
 2. Add localhost and your deployed hostname to Authentication’s authorized domains.
-3. Create a Firestore database.
-4. Deploy `firestore.rules` to the **intended Firebase project**, using Firebase Console or your authorized Firebase CLI setup. Example: `firebase deploy --only firestore:rules --project YOUR_PROJECT_ID`.
+3. No Firestore database is required for the included account flows.
+4. Firebase Authentication owns the display-name profile. Only deploy the optional Firestore rules if you independently add document storage.
 5. Rebuild Vercel after changing public configuration.
 6. With a disposable test account, verify registration, sign-in, profile update, reset-email delivery and sign-out. Confirm a different account cannot read or write that profile.
 
-**Vercel does not deploy Firebase rules.** The repository’s former rules expired in November 2024. The replacement file permits authenticated users to access only their own profile document and restricts writable fields. Publishing this repository does not establish whether the existing Firebase project has applied those rules. The app surfaces permission/provider/domain errors instead of claiming success, and the demo remains available.
-
-Profile documents are stored at `users/{uid}`. Google sign-in creates a profile only if one does not exist; repeat sign-ins never overwrite existing names. Auth and profile subscriptions are unsubscribed on identity changes and unmount. Passwords and ID tokens are never logged or stored by the application.
+Account names are stored directly on the Firebase Authentication user with `updateProfile`. No Firestore reads, writes or rules are involved in the included flows. Existing accounts retain their Firebase display name. Legacy document profiles are left untouched. The optional rule files are retained for projects that later add a document database. Passwords and ID tokens are never logged or stored by the application.
 
 ## Authorization boundary
 
-`ProtectedRoutes` is a **client-side UI guard**, not server-side access control. Firebase Authentication manages real sessions, and Firestore rules authorize profile access. The demo’s sessionStorage marker grants no access to Firebase. This starter has no private server API. Before adding one, verify Firebase ID tokens or server session cookies on every protected server endpoint. Configure email verification requirements, abuse protection, monitoring, quotas and recovery templates for your production product.
+`ProtectedRoutes` is a **client-side UI guard**, not server-side access control. Firebase Authentication manages real sessions, and Firebase Authentication authorizes account profile updates. The demo’s sessionStorage marker grants no access to Firebase. This starter has no private server API. Before adding one, verify Firebase ID tokens or server session cookies on every protected server endpoint. Configure email verification requirements, abuse protection, monitoring, quotas and recovery templates for your production product.
 
 The profile UI edits names. Email is read-only; password changes use Firebase’s emailed recovery flow rather than collecting a current password in the profile UI. A recovery confirmation is shown only after Firebase accepts the request, with wording that does not reveal account existence. Actual email delivery depends on Firebase configuration and the user’s mail provider.
 
@@ -71,3 +69,6 @@ Use the Next.js framework preset, the repository root, Node 24, install command 
 ## Interface
 
 Responsive layouts, labelled controls, keyboard focus states, a skip link, password visibility toggles and reduced-motion support. The landing page’s identity illustration uses CSS and icons rather than external image requests. The `/guide` page explains flows, Firebase setup and demo boundaries for visitors.
+
+## Blue & copper account update
+The interface now uses navy, blue and copper. Account display names are stored directly with Firebase Authentication `updateProfile`, so registration, sign-in and profile editing do not require a Firestore database or deployed profile rules. The included Firestore files are legacy, optional examples; they are not used by the app. No extra personal fields are stored. The account-free demo remains isolated in session storage.
